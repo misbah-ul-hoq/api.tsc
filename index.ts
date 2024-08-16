@@ -28,6 +28,9 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
+    app.get("/students", (req, res) => {
+      res.send("this are the students data sent from the route");
+    });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );

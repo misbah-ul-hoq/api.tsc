@@ -48,3 +48,7 @@ app.listen(port, () => {
 app.get("/", (req, res) => {
   res.send("Tsc server is running");
 });
+
+app.get("/some", (req, res) => {
+  res.send("some route")
+})

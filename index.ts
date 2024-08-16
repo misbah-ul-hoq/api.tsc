@@ -1,4 +1,4 @@
-import express, { Express } from "express";
+import express, { Express, Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { MongoClient, ServerApiVersion } from "mongodb";
@@ -45,10 +45,10 @@ app.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("Tsc server is running");
 });
 
 app.get("/some", (req, res) => {
-  res.send("some route")
-})
+  res.send("some route");
+});

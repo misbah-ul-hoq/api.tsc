@@ -34,12 +34,19 @@ async function run() {
       const isSocialLogin = req.query.socialLogin == "true";
       const defaultUser = req.body;
       const socialUser = { ...req.body, role: "student" };
-      if (!isSocialLogin) {
-        const result = await users.insertOne(defaultUser);
-        res.send(result);
+      const socialUserEmail = socialUser.email;
+      const isOldUser = await users.findOne({ email: socialUserEmail });
+
+      if (isOldUser) {
+        return res.send({ message: "User already registered" });
       } else {
-        const result = await users.insertOne(socialUser);
-        res.send(result);
+        if (!isSocialLogin) {
+          const result = await users.insertOne(defaultUser);
+          res.send(result);
+        } else {
+          const result = await users.insertOne(socialUser);
+          res.send(result);
+        }
       }
     });
     app.get("/students", (req, res) => {

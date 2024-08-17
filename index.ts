@@ -25,10 +25,10 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
+    // await client.connect();
     // Send a ping to confirm a successful connection
     const users = client.db("tsc").collection("users");
-    await client.db("admin").command({ ping: 1 });
+    // await client.db("admin").command({ ping: 1 });
 
     app.post("/users", async (req, res) => {
       const isSocialLogin = req.query.socialLogin == "true";
@@ -45,9 +45,9 @@ async function run() {
     app.get("/students", (req, res) => {
       res.send("this are the students data sent from the route");
     });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!"
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();

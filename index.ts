@@ -27,7 +27,21 @@ async function run() {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     // Send a ping to confirm a successful connection
+    const users = client.db("tsc").collection("users");
     await client.db("admin").command({ ping: 1 });
+
+    app.post("/users", async (req, res) => {
+      const isSocialLogin = req.query.socialLogin == "true";
+      const defaultUser = req.body;
+      const socialUser = { ...req.body, role: "student" };
+      if (!isSocialLogin) {
+        const result = await users.insertOne(defaultUser);
+        res.send(result);
+      } else {
+        const result = await users.insertOne(socialUser);
+        res.send(result);
+      }
+    });
     app.get("/students", (req, res) => {
       res.send("this are the students data sent from the route");
     });
@@ -45,10 +59,11 @@ app.listen(port, () => {
   console.log(`server started at http://localhost:${port}`);
 });
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (req, res) => {
   res.send("Tsc server is running");
+  // res.send(req.params);
 });
 
-app.get("/some", (req, res) => {
-  res.send("some route");
+app.get("/test", (req, res) => {
+  res.send(req.query);
 });

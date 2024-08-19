@@ -43,7 +43,21 @@ const verifyUser = (req: Request, res: Response, next: NextFunction): void => {
   });
 };
 
-app.get("/verify", verifyUser, (req, res) => {});
+const verifyAdmin = (req: Request, res: Response, next: NextFunction): void => {
+  const accessToken = req.headers.accesstoken as string;
+  jwt.verify(accessToken, accesTokenSecret, (err, decoded) => {
+    if (err) {
+      res.status(401).send({ message: "something went wrong" });
+      return;
+    }
+    if (typeof decoded != "string" && typeof decoded != "undefined") {
+      if (decoded.role !== "admin")
+        res.status(403).send({ message: "unauthorized access" });
+    }
+  });
+};
+
+app.get("/test", verifyAdmin);
 
 async function run() {
   try {

@@ -1,6 +1,7 @@
-import express, { Express, Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import { MongoClient, ServerApiVersion } from "mongodb";
 
 dotenv.config();
@@ -9,9 +10,12 @@ const port = process.env.PORT || 8080;
 
 // middlewares
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.5dbzkti.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
+const accesTokenSecret = process.env.TOKEN_SECRET as string;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -29,6 +33,18 @@ async function run() {
     // Send a ping to confirm a successful connection
     const users = client.db("tsc").collection("users");
     // await client.db("admin").command({ ping: 1 });
+
+    app.post("/jwt", async (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, accesTokenSecret);
+      res.send({ token });
+    });
+
+    app.get("/user/:email", async (req, res) => {
+      const query = { email: req.params.email };
+      const user = await users.findOne(query);
+      res.send(user);
+    });
 
     app.post("/users", async (req, res) => {
       const isSocialLogin = req.query.socialLogin == "true";
@@ -49,9 +65,7 @@ async function run() {
         }
       }
     });
-    app.get("/students", (req, res) => {
-      res.send("this are the students data sent from the route");
-    });
+
     // console.log(
     //   "Pinged your deployment. You successfully connected to MongoDB!"
     // );

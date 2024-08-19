@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
@@ -25,6 +25,25 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
+
+const verifyUser = (req: Request, res: Response, next: NextFunction): void => {
+  const accessToken = req.headers.accessToken as string;
+
+  if (!accessToken) {
+    res.status(401).send({ message: "Unauthorized access" });
+    return;
+  }
+
+  jwt.verify(accessToken, accesTokenSecret, (err, decoded) => {
+    if (err) {
+      res.status(403).send({ message: "Something went wrong" });
+      return;
+    }
+    next();
+  });
+};
+
+app.get("/verify", verifyUser, (req, res) => {});
 
 async function run() {
   try {

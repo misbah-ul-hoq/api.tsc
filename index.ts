@@ -43,6 +43,27 @@ const verifyUser = (req: Request, res: Response, next: NextFunction): void => {
   });
 };
 
+const verifyTutor = (req: Request, res: Response, next: NextFunction): void => {
+  const accessToken = req.headers.accessToken as string;
+
+  if (!accessToken) {
+    res.status(401).send({ message: "Unauthorized access" });
+    return;
+  }
+
+  jwt.verify(accessToken, accesTokenSecret, (err, decoded) => {
+    if (err) {
+      res.status(403).send({ message: "Something went wrong" });
+      return;
+    }
+    if (typeof decoded != "string" && typeof decoded != "undefined") {
+      if (decoded.role !== "tutor")
+        res.status(403).send({ message: "Forbidden access" });
+    }
+    next();
+  });
+};
+
 const verifyAdmin = (req: Request, res: Response, next: NextFunction): void => {
   const accessToken = req.headers.accesstoken as string;
   jwt.verify(accessToken, accesTokenSecret, (err, decoded) => {
@@ -63,6 +84,7 @@ async function run() {
     // await client.connect();
     // Send a ping to confirm a successful connection
     const users = client.db("tsc").collection("users");
+    const studySession = client.db("tsc").collection("studySession");
     // await client.db("admin").command({ ping: 1 });
 
     app.post("/jwt", async (req, res) => {
@@ -95,6 +117,12 @@ async function run() {
           res.send(result);
         }
       }
+    });
+
+    app.post("/study-session", verifyUser, verifyTutor, async (req, res) => {
+      const session = req.body;
+      const result = await studySession.insertOne(session);
+      res.send(result);
     });
 
     // console.log(

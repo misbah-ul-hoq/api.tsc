@@ -27,7 +27,9 @@ const client = new MongoClient(uri, {
 });
 
 const verifyUser = (req: Request, res: Response, next: NextFunction): void => {
-  const accessToken = req.headers.accessToken as string;
+  const accessToken = req.headers.accesstoken as string;
+  // console.log(req.headers);
+  // console.log(accessToken);
 
   if (!accessToken) {
     res.status(401).send({ message: "Unauthorized access" });
@@ -44,7 +46,7 @@ const verifyUser = (req: Request, res: Response, next: NextFunction): void => {
 };
 
 const verifyTutor = (req: Request, res: Response, next: NextFunction): void => {
-  const accessToken = req.headers.accessToken as string;
+  const accessToken = req.headers.accesstoken as string;
 
   if (!accessToken) {
     res.status(401).send({ message: "Unauthorized access" });

@@ -2,7 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
 
 dotenv.config();
 const app = express();
@@ -119,6 +119,43 @@ async function run() {
           res.send(result);
         }
       }
+    });
+
+    // study session related apis
+
+    app.get("/study-session", async (req, res) => {
+      const email = req.query.email;
+
+      const pipeline = [
+        {
+          $match: { tutorEmail: email },
+        },
+        {
+          $addFields: {
+            statusOrder: {
+              $cond: [
+                { $eq: ["$status", "approved"] },
+                1,
+                { $cond: [{ $eq: ["$status", "rejected"] }, 2, 3] },
+              ],
+            },
+          },
+        },
+        {
+          $sort: { statusOrder: 1 },
+        },
+        {
+          $project: { statusOrder: 0 }, // Optional: Exclude the statusOrder field from the result
+        },
+      ];
+
+      const result = await studySession.aggregate(pipeline).toArray();
+      res.send(result);
+    });
+
+    app.patch("/study-session/:id", async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const updateData = req.body;
     });
 
     app.post("/study-session", verifyUser, verifyTutor, async (req, res) => {

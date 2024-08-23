@@ -87,6 +87,7 @@ async function run() {
     // Send a ping to confirm a successful connection
     const users = client.db("tsc").collection("users");
     const studySession = client.db("tsc").collection("studySession");
+    const sessionMaterials = client.db("tsc").collection("sessionMaterials");
     // await client.db("admin").command({ ping: 1 });
 
     app.post("/jwt", async (req, res) => {
@@ -125,11 +126,13 @@ async function run() {
 
     app.get("/study-session", async (req, res) => {
       const email = req.query.email;
+      const status = req.query.status;
 
       const pipeline = [
         {
           $match: { tutorEmail: email },
         },
+        ...(status ? [{ $match: { status: status } }] : []),
         {
           $addFields: {
             statusOrder: {
@@ -172,6 +175,18 @@ async function run() {
       const result = await studySession.insertOne(session);
       res.send(result);
     });
+
+    //session materials related apis
+    app.post(
+      "/session-materials",
+      verifyUser,
+      verifyTutor,
+      async (req, res) => {
+        const data = req.body;
+        const result = await sessionMaterials.insertOne(data);
+        res.send(result);
+      }
+    );
 
     // console.log(
     //   "Pinged your deployment. You successfully connected to MongoDB!"

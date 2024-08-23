@@ -123,7 +123,6 @@ async function run() {
     });
 
     // study session related apis
-
     app.get("/study-session", async (req, res) => {
       const email = req.query.email;
       const status = req.query.status;

@@ -177,6 +177,13 @@ async function run() {
     });
 
     //session materials related apis
+    app.get("/session-materials", async (req, res) => {
+      const email = req.query?.email;
+      const query = { tutorEmail: email };
+      const result = await sessionMaterials.find(email ? query : {}).toArray();
+      res.send(result);
+    });
+
     app.post(
       "/session-materials",
       verifyUser,

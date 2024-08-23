@@ -184,16 +184,11 @@ async function run() {
       res.send(result);
     });
 
-    app.delete(
-      "/session-materials/:id",
-      verifyUser,
-      verifyTutor,
-      async (req, res) => {
-        const query = { _id: new ObjectId(req.params.id) };
-        const result = await sessionMaterials.deleteOne(query);
-        res.send(result);
-      }
-    );
+    app.get("/session-materials/:id", async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await sessionMaterials.findOne(query);
+      res.send(result);
+    });
 
     app.post(
       "/session-materials",
@@ -202,6 +197,30 @@ async function run() {
       async (req, res) => {
         const data = req.body;
         const result = await sessionMaterials.insertOne(data);
+        res.send(result);
+      }
+    );
+
+    app.patch(
+      "/session-materials/:id",
+      verifyUser,
+      verifyTutor,
+      async (req, res) => {
+        const query = { _id: new ObjectId(req.params.id) };
+        const result = await sessionMaterials.updateOne(query, {
+          $set: req.body,
+        });
+        res.send(result);
+      }
+    );
+
+    app.delete(
+      "/session-materials/:id",
+      verifyUser,
+      verifyTutor,
+      async (req, res) => {
+        const query = { _id: new ObjectId(req.params.id) };
+        const result = await sessionMaterials.deleteOne(query);
         res.send(result);
       }
     );

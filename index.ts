@@ -177,12 +177,23 @@ async function run() {
     });
 
     //session materials related apis
-    app.get("/session-materials", async (req, res) => {
+    app.get("/session-materials", verifyUser, async (req, res) => {
       const email = req.query?.email;
       const query = { tutorEmail: email };
       const result = await sessionMaterials.find(email ? query : {}).toArray();
       res.send(result);
     });
+
+    app.delete(
+      "/session-materials/:id",
+      verifyUser,
+      verifyTutor,
+      async (req, res) => {
+        const query = { _id: new ObjectId(req.params.id) };
+        const result = await sessionMaterials.deleteOne(query);
+        res.send(result);
+      }
+    );
 
     app.post(
       "/session-materials",

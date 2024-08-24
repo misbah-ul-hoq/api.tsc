@@ -78,7 +78,6 @@ const verifyAdmin = (req: Request, res: Response, next: NextFunction): void => {
         res.status(403).send({ message: "Forbidden access" });
         return;
       }
-      // req.email = (decoded as { email: string }).email;
 
       next();
     }
@@ -109,11 +108,14 @@ async function run() {
     });
 
     app.get("/users", async (req, res) => {
-      const result = await users.find().toArray();
+      const query = { email: req.query.email };
+      const result = await users
+        .find(req.query.email ? { email: { $nin: [req.query.email] } } : {})
+        .toArray();
       res.send(result);
     });
 
-    app.post("/users", verifyAdmin, async (req, res) => {
+    app.post("/users", async (req, res) => {
       const isSocialLogin = req.query.socialLogin == "true";
       const defaultUser = req.body;
       const socialUser = { ...req.body, role: "student" };
@@ -131,6 +133,13 @@ async function run() {
           res.send(result);
         }
       }
+    });
+
+    app.patch("/user/:id", verifyAdmin, async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const updatedDoc = req.body;
+      const result = await users.updateOne(query, { $set: updatedDoc });
+      res.send(result);
     });
 
     // study session related apis

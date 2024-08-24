@@ -74,8 +74,13 @@ const verifyAdmin = (req: Request, res: Response, next: NextFunction): void => {
       return;
     }
     if (typeof decoded != "string" && typeof decoded != "undefined") {
-      if (decoded.role !== "admin")
+      if (decoded.role !== "admin") {
         res.status(403).send({ message: "Forbidden access" });
+        return;
+      }
+      // req.email = (decoded as { email: string }).email;
+
+      next();
     }
   });
 };
@@ -103,12 +108,12 @@ async function run() {
       res.send(user);
     });
 
-    app.get("/users", verifyUser, verifyAdmin, async (req, res) => {
+    app.get("/users", async (req, res) => {
       const result = await users.find().toArray();
       res.send(result);
     });
 
-    app.post("/users", async (req, res) => {
+    app.post("/users", verifyAdmin, async (req, res) => {
       const isSocialLogin = req.query.socialLogin == "true";
       const defaultUser = req.body;
       const socialUser = { ...req.body, role: "student" };

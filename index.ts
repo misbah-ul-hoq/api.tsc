@@ -96,10 +96,16 @@ async function run() {
       res.send({ token });
     });
 
+    //user related apis
     app.get("/user/:email", async (req, res) => {
       const query = { email: req.params.email };
       const user = await users.findOne(query);
       res.send(user);
+    });
+
+    app.get("/users", verifyUser, verifyAdmin, async (req, res) => {
+      const result = await users.find().toArray();
+      res.send(result);
     });
 
     app.post("/users", async (req, res) => {

@@ -108,10 +108,18 @@ async function run() {
     });
 
     app.get("/users", async (req, res) => {
-      const query = { email: req.query.email };
-      const result = await users
-        .find(req.query.email ? { email: { $nin: [req.query.email] } } : {})
-        .toArray();
+      const search = req.query.search as string;
+
+      if (!search) {
+        const data = await users.find().toArray();
+        return res.send(data);
+      }
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(search);
+      const query = isEmail
+        ? { email: { $regex: search, $options: "i" } } // Search by email
+        : { displayName: { $regex: search, $options: "i" } }; // Search by name
+
+      const result = await users.find(query).toArray();
       res.send(result);
     });
 

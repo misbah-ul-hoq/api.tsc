@@ -163,7 +163,7 @@ async function run() {
 
       const pipeline = [
         {
-          $match: { tutorEmail: email },
+          $match: email ? { tutorEmail: email } : {},
         },
         ...(status ? [{ $match: { status: status } }] : []),
         {

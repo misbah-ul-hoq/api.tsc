@@ -114,10 +114,16 @@ async function run() {
         const data = await users.find().toArray();
         return res.send(data);
       }
-      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(search);
-      const query = isEmail
-        ? { email: { $regex: search, $options: "i" } } // Search by email
-        : { displayName: { $regex: search, $options: "i" } }; // Search by name
+      // const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(search);
+      // const query = isEmail
+      //   ? { email: { $regex: search, $options: "i" } } // Search by email
+      //   : { displayName: { $regex: search, $options: "i" } }; // Search by name
+      const query = {
+        $or: [
+          { email: { $regex: search, $options: "i" } },
+          { displayName: { $regex: search, $options: "i" } },
+        ],
+      };
 
       const result = await users.find(query).toArray();
       res.send(result);

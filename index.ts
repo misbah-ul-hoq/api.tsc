@@ -189,19 +189,14 @@ async function run() {
       res.send(result);
     });
 
-    app.patch(
-      "/study-session/:id",
-      verifyUser,
-      verifyTutor,
-      async (req, res) => {
-        const query = { _id: new ObjectId(req.params.id) };
-        const updateData = req.body;
-        const result = await studySession.updateOne(query, {
-          $set: updateData,
-        });
-        res.send(result);
-      }
-    );
+    app.patch("/study-session/:id", verifyUser, async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const updateData = req.body;
+      const result = await studySession.updateOne(query, {
+        $set: updateData,
+      });
+      res.send(result);
+    });
 
     app.post("/study-session", verifyUser, verifyTutor, async (req, res) => {
       const session = req.body;

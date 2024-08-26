@@ -248,16 +248,11 @@ async function run() {
       }
     );
 
-    app.delete(
-      "/session-materials/:id",
-      verifyUser,
-      verifyTutor,
-      async (req, res) => {
-        const query = { _id: new ObjectId(req.params.id) };
-        const result = await sessionMaterials.deleteOne(query);
-        res.send(result);
-      }
-    );
+    app.delete("/session-materials/:id", verifyUser, async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await sessionMaterials.deleteOne(query);
+      res.send(result);
+    });
 
     // console.log(
     //   "Pinged your deployment. You successfully connected to MongoDB!"

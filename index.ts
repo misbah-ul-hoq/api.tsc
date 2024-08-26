@@ -204,6 +204,12 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/study-session/:id", verifyAdmin, async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await studySession.deleteOne(query);
+      res.send(result);
+    });
+
     //session materials related apis
     app.get("/session-materials", verifyUser, async (req, res) => {
       const email = req.query?.email;

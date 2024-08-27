@@ -189,6 +189,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/study-session/:id", verifyUser, async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await studySession.findOne(query);
+      res.send(result);
+    });
+
     app.patch("/study-session/:id", verifyUser, async (req, res) => {
       const query = { _id: new ObjectId(req.params.id) };
       const updateData = req.body;

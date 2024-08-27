@@ -189,7 +189,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/study-session/:id", verifyUser, async (req, res) => {
+    app.get("/study-session/:id", async (req, res) => {
       const query = { _id: new ObjectId(req.params.id) };
       const result = await studySession.findOne(query);
       res.send(result);

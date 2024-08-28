@@ -111,7 +111,7 @@ async function run() {
       const search = req.query.search as string;
       const role = req.query.role as string;
 
-      if (!search || !role) {
+      if (!search && !role) {
         const data = await users.find().toArray();
         return res.send(data);
       }

@@ -126,7 +126,7 @@ async function run() {
         };
 
         const result = await users.find(query).toArray();
-        res.send(result);
+        return res.send(result);
       }
 
       // get a user with role specified in the query.

@@ -109,24 +109,31 @@ async function run() {
 
     app.get("/users", async (req, res) => {
       const search = req.query.search as string;
+      const role = req.query.role as string;
 
-      if (!search) {
+      if (!search || !role) {
         const data = await users.find().toArray();
         return res.send(data);
       }
-      // const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(search);
-      // const query = isEmail
-      //   ? { email: { $regex: search, $options: "i" } } // Search by email
-      //   : { displayName: { $regex: search, $options: "i" } }; // Search by name
-      const query = {
-        $or: [
-          { email: { $regex: search, $options: "i" } },
-          { displayName: { $regex: search, $options: "i" } },
-        ],
-      };
 
-      const result = await users.find(query).toArray();
-      res.send(result);
+      // search for a specific user with name or email
+      if (search) {
+        const query = {
+          $or: [
+            { email: { $regex: search, $options: "i" } },
+            { displayName: { $regex: search, $options: "i" } },
+          ],
+        };
+
+        const result = await users.find(query).toArray();
+        res.send(result);
+      }
+
+      // get a user with role specified in the query.
+      if (role) {
+        const tutors = await users.find({ role: role }).toArray();
+        res.send(tutors);
+      }
     });
 
     app.post("/users", async (req, res) => {

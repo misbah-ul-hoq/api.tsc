@@ -92,6 +92,7 @@ async function run() {
     const users = client.db("tsc").collection("users");
     const studySession = client.db("tsc").collection("studySession");
     const sessionMaterials = client.db("tsc").collection("sessionMaterials");
+    const bookedSessions = client.db("tsc").collection("bookedSessions");
     // await client.db("admin").command({ ping: 1 });
 
     app.post("/jwt", async (req, res) => {
@@ -220,6 +221,13 @@ async function run() {
     app.delete("/study-session/:id", verifyAdmin, async (req, res) => {
       const query = { _id: new ObjectId(req.params.id) };
       const result = await studySession.deleteOne(query);
+      res.send(result);
+    });
+
+    // booked session related apis
+    app.post("/booked-sessions", async (req, res) => {
+      const data = req.body;
+      const result = await bookedSessions.insertOne(data);
       res.send(result);
     });
 

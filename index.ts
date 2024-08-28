@@ -225,15 +225,6 @@ async function run() {
     });
 
     // booked session related apis
-    app.get("/booked-sessions", async (req, res) => {
-      const query = {
-        // sessionId: req.query.sessionId ? req.query.sessionId : "",
-        studentEmail: req.query.email ? req.query.email : "",
-      };
-      const result = await bookedSessions.find(query).toArray();
-      res.send(result);
-    });
-
     app.get("/booked-sessions/:email", async (req, res) => {
       const result = await bookedSessions
         .find({

@@ -225,6 +225,9 @@ async function run() {
     });
 
     // booked session related apis
+    app.get("/booked-session", async (req, res) => {
+      const query = { sessionId: req.params, studentEmail: req.query.email };
+    });
     app.post("/booked-sessions", async (req, res) => {
       const data = req.body;
       const result = await bookedSessions.insertOne(data);

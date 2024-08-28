@@ -225,10 +225,34 @@ async function run() {
     });
 
     // booked session related apis
-    app.get("/booked-session", async (req, res) => {
-      const query = { sessionId: req.params, studentEmail: req.query.email };
+    app.get("/booked-sessions", async (req, res) => {
+      const query = {
+        // sessionId: req.query.sessionId ? req.query.sessionId : "",
+        studentEmail: req.query.email ? req.query.email : "",
+      };
+      const result = await bookedSessions.find(query).toArray();
+      res.send(result);
     });
+
+    app.get("/booked-sessions/:email", async (req, res) => {
+      const result = await bookedSessions
+        .find({
+          studentEmail: req.params.email,
+        })
+        .toArray();
+      res.send(result);
+    });
+
     app.post("/booked-sessions", async (req, res) => {
+      const existingSession = await bookedSessions.findOne({
+        studentEmail: req.body.studentEmail,
+        sessionId: req.body.sessionId,
+      });
+      if (existingSession) {
+        return res
+          .status(409)
+          .send({ message: "Already booked for this session" });
+      }
       const data = req.body;
       const result = await bookedSessions.insertOne(data);
       res.send(result);

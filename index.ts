@@ -301,6 +301,12 @@ async function run() {
       res.send(userNotes);
     });
 
+    app.delete("/notes/:id", verifyUser, async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await notes.deleteOne(query);
+      res.send(result);
+    });
+
     app.post("/create-note", verifyUser, async (req, res) => {
       const note = req.body;
       const result = await notes.insertOne(note);

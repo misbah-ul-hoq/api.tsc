@@ -307,6 +307,13 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/notes/:id", verifyUser, async (req, res) => {
+      const filter = { _id: new ObjectId(req.params.id) };
+      const updateDoc = req.body;
+      const result = await notes.updateOne(filter, { $set: updateDoc });
+      res.send(result);
+    });
+
     app.post("/create-note", verifyUser, async (req, res) => {
       const note = req.body;
       const result = await notes.insertOne(note);

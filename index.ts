@@ -332,6 +332,7 @@ async function run() {
       const result = await ratings.find(query).toArray();
       res.send(result);
     });
+
     app.post("/ratings", verifyUser, async (req, res) => {
       const result = await ratings.insertOne(req.body);
       res.send(result);

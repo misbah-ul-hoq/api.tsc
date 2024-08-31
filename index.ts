@@ -235,8 +235,8 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/booked-sessions/:id", async (req, res) => {
-      const query = { _id: new ObjectId(req.params.id) };
+    app.get("/booked-sessions", async (req, res) => {
+      const query = { _id: new ObjectId(req.query.id as string) };
       const result = await bookedSessions.findOne(query);
       res.send(result);
     });

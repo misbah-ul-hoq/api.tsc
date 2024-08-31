@@ -94,7 +94,7 @@ async function run() {
     const sessionMaterials = client.db("tsc").collection("sessionMaterials");
     const bookedSessions = client.db("tsc").collection("bookedSessions");
     const notes = client.db("tsc").collection("notes");
-    // await client.db("admin").command({ ping: 1 });
+    const ratings = client.db("tsc").collection("ratings");
 
     app.post("/jwt", async (req, res) => {
       const user = req.body;
@@ -323,6 +323,12 @@ async function run() {
     app.post("/create-note", verifyUser, async (req, res) => {
       const note = req.body;
       const result = await notes.insertOne(note);
+      res.send(result);
+    });
+
+    // ratings related api
+    app.post("/ratings", verifyUser, async (req, res) => {
+      const result = await ratings.insertOne(req.body);
       res.send(result);
     });
 

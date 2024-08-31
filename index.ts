@@ -235,6 +235,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/booked-sessions/:id", async (req, res) => {
+      const query = { _id: new ObjectId(req.params.id) };
+      const result = await bookedSessions.findOne(query);
+      res.send(result);
+    });
+
     app.post("/booked-sessions", async (req, res) => {
       const existingSession = await bookedSessions.findOne({
         studentEmail: req.body.studentEmail,

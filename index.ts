@@ -264,6 +264,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/view-materials", async (req, res) => {
+      const query = { sessionId: req.query.sessionId };
+      const result = await sessionMaterials.find(query).toArray();
+      res.send(result);
+    });
+
     app.get("/session-materials/:id", async (req, res) => {
       const query = { _id: new ObjectId(req.params.id) };
       const result = await sessionMaterials.findOne(query);
